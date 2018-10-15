@@ -54,7 +54,7 @@ store.dispatch(loadAccessToken(() => {
   } = store.getState().app;
 
   socket.on('connect', () => {
-    socket.emit('startStreamData', {
+    socket.emit('start-stream-data', {
       role: 'waveAnalyzer',
       user_id,
       signature,

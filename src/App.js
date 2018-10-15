@@ -77,8 +77,7 @@ class App extends Component {
             };
             state[params.name] = params.value;
             this.setState(state);
-            console.log(state);
-            createSocket().emit('mic', state);
+            createSocket().emit('speech-config', state);
           }}
           />
         </div>
