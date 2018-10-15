@@ -13,7 +13,7 @@ export default class Chart extends Component {
     super(props);
 
     this.thresholdValue = props.threshold;
-    this.levelValue = props.level*32768/100;
+    this.levelValue = props.level*32768/200;
     this.propValue = {
       thresholdValue: {
         name: 'threshold',
@@ -35,7 +35,7 @@ export default class Chart extends Component {
         value: 0,
         setValue: function(v) {
           this.y = v;
-          this.value = parseInt(v*100/32768);
+          this.value = parseInt(v*200/32768);
           this.text = `level: ${this.value}%`;
         },
       },
@@ -124,7 +124,7 @@ export default class Chart extends Component {
       this.updateGraph();
     }
     if (this.props.level != nextProps.level) {
-      this.levelValue = parseInt(nextProps.level*32768/100);
+      this.levelValue = parseInt(nextProps.level*32768/200);
       this.propValue.levelValue.setValue(this.levelValue);
       this.updateGraph();
     }
