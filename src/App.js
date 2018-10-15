@@ -3,8 +3,9 @@ import { connect } from 'react-redux'
 import logo from './logo.svg';
 import './App.css';
 import WaveChart from './components/WaveChart';
-import io from 'socket.io-client'
-const socket = io();
+import {
+  createSocket,
+} from './reducers';
 
 class App extends Component {
   constructor(props, context) {
@@ -61,6 +62,7 @@ class App extends Component {
           <WaveChart style={{
             width: width-1-20,
             height: height-4-80,
+            border: 'solid 1px lightgray',
           }}
           level={this.state.level}
           threshold={this.state.threshold}
@@ -68,11 +70,15 @@ class App extends Component {
           maxDataLength={this.props.waveFreq*this.props.waveRange}
           waveSkip={this.props.waveSkip}
           onChange={(params) => {
-            const state = {};
+            const state = {
+              role: 'waveAnalyzer',
+              user_id: this.props.user_id,
+              signature: this.props.signature,
+            };
             state[params.name] = params.value;
             this.setState(state);
             console.log(state);
-            socket.emit('mic', state);
+            createSocket().emit('mic', state);
           }}
           />
         </div>
@@ -85,6 +91,8 @@ const props = state => {
   return ({
     state: state.app.state,
     wave: state.app.wave,
+    user_id: state.app.user_id,
+    signature: state.app.signature,
     threshold: parseInt(state.app.threshold),
     level: parseInt(state.app.level*100),
     waveRange: state.app.waveRange,

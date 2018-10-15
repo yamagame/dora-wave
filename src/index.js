@@ -6,8 +6,11 @@ import thunk from 'redux-thunk'
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import io from 'socket.io-client'
-const socket = io();
+import {
+  createSocket,
+  setParams,
+  loadAccessToken,
+} from './reducers';
 
 const waveRange = 9;
 const waveSkip = 240;
@@ -24,28 +27,6 @@ const waveData = (data) => async (dispatch, getState) => {
   })
 }
 
-const setParam = (payload) => async (dispatch, getState) => {
-  dispatch({
-    type: 'app',
-    payload: {
-      ...payload,
-    },
-  })
-}
-
-socket.on('connect', () => {
-  socket.emit('request', { waveSkip });
-})
-
-socket.on('data', (data) => {
-  store.dispatch(waveData(data.wave));
-  store.dispatch(setParam({
-    state: data.state,
-    threshold: data.threshold,
-    level: data.level,
-  }));
-})
-
 const store = createStore(combineReducers({
   app: (state = {}, action) => {
     return {
@@ -60,8 +41,39 @@ const store = createStore(combineReducers({
     waveRange,
     waveSkip,
     waveFreq,
+    threshold: 2000,
+    level: 100,
   },
 }, applyMiddleware(thunk))
+
+store.dispatch(loadAccessToken(() => {
+  const socket = createSocket();
+  const {
+    user_id,
+    signature,
+  } = store.getState().app;
+
+  socket.on('connect', () => {
+    socket.emit('startStreamData', {
+      role: 'waveAnalyzer',
+      user_id,
+      signature,
+    });
+  })
+
+  socket.on('speech-data', (data) => {
+    console.log(JSON.stringify(data, null, '  '));
+  })
+
+  socket.on('wave-data', (data) => {
+    store.dispatch(waveData(data.wave));
+    store.dispatch(setParams({
+      state: data.state,
+      threshold: data.threshold,
+      level: data.level,
+    }));
+  })
+}));
 
 ReactDOM.render(
   <Provider store={store}>
