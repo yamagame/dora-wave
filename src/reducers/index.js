@@ -36,6 +36,9 @@ export const loadAccessToken = (callback) => async (dispatch, getState) => {
     }
     if (callback) callback();
   } catch(err) {
+    if (process.env.NODE_ENV === 'production') {
+      window.location = '/admin-page';
+    }
     console.log(err);
   }
 }
