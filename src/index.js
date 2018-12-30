@@ -17,12 +17,19 @@ const waveSkip = 240;
 const waveFreq = 16000;
 
 const waveData = (data) => async (dispatch, getState) => {
-  const wave = getState().app.wave;
-  const w = wave.concat(data);
+  const owave = getState().app.wave;
+  const w = owave.concat(data);
+  const wave = w.slice(-waveRange*waveFreq/waveSkip);
+  let avg = 0;
+  wave.forEach( v => {
+    avg += v.y;
+  })
+  avg /= wave.length;
   dispatch({
     type: 'app',
     payload: {
-      wave: w.slice(-waveRange*waveFreq/waveSkip),
+      avg,
+      wave,
     },
   })
 }
@@ -37,6 +44,7 @@ const store = createStore(combineReducers({
 }), {
   app: {
     wave: [],
+    avg: 0,
     state: 'idle',
     waveRange,
     waveSkip,

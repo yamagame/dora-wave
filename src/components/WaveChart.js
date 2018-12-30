@@ -172,7 +172,7 @@ export default class Chart extends Component {
       .attr("d", this.line);
     chart
       .append('path')
-      .datum(this.props.data.map( (v, i) => ({ x: i*this.props.waveSkip, y: v.y, }) ))
+      .datum(this.props.data.map( (v, i) => ({ x: i*this.props.waveSkip, y: v.y-this.props.avg, }) ))
       .classed('wave', true)
       .style("pointer-events", "none")
       .attr('stroke', 'steelblue')

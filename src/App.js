@@ -66,6 +66,7 @@ class App extends Component {
           }}
           level={this.state.level}
           threshold={this.state.threshold}
+          avg={this.props.avg}
           data={this.props.wave}
           maxDataLength={this.props.waveFreq*this.props.waveRange}
           waveSkip={this.props.waveSkip}
@@ -89,6 +90,7 @@ class App extends Component {
 const props = state => {
   return ({
     state: state.app.state,
+    avg: state.app.avg,
     wave: state.app.wave,
     user_id: state.app.user_id,
     signature: state.app.signature,
